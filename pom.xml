@@ -296,9 +296,7 @@
     </dependencyManagement>
 
     <build>
-<<<<<<< HEAD
         <plugins>
-           
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-install-plugin</artifactId>
@@ -376,22 +374,6 @@
 
         </plugins>
 
-=======
-      <plugins>
-        <plugin>
-            <artifactId>maven-source-plugin</artifactId>
-            <executions>
-                <execution>
-                    <id>attach-sources</id>
-                    <goals>
-                        <goal>jar</goal>
-                    </goals>
-                </execution>
-            </executions>
-        </plugin>
-      </plugins>
-      
->>>>>>> 58beeaa2b0fd82b65041f4a12ce42be5ce38ce2f
         <!-- PluginManagement -->
         <pluginManagement>
             <plugins>
