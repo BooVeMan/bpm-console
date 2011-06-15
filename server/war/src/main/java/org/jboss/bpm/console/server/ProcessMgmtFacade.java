@@ -36,7 +36,10 @@ import org.jboss.bpm.console.server.util.RsComment;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
+
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLDecoder;
@@ -224,6 +227,61 @@ public class ProcessMgmtFacade
     Payload2XML payload2XML = new Payload2XML();
     StringBuffer sb = payload2XML.convert(instanceId, javaPayload);
     return Response.ok(sb.toString()).build();
+  }
+
+  @GET
+  @Path("instance/{id}")
+  @Produces("application/json")
+  @RsComment(project = {ProjectName.JBPM})
+  public Response getInstance(
+      @PathParam("id")
+      String instanceId
+  )
+  {
+    ProcessInstanceRef processInstanceRef = getProcessManagement().getProcessInstance(instanceId);
+    return createJsonResponse(processInstanceRef);
+  }
+
+  @GET
+  @Path("instance/{id}/variable/{name}")
+  @Produces("application/json")
+  @RsComment(project = {ProjectName.JBPM})
+  public Response getInstanceVariable(
+      @PathParam("id")
+      String instanceId,
+      @PathParam("name")
+      String variableName
+  )
+  {
+    Map<String, Object> processData = getProcessManagement().getInstanceData(instanceId);
+    if(processData!=null && processData.containsKey(variableName)) {
+        return createJsonResponse(processData.get(variableName));
+    }
+    return Response.status(Status.NO_CONTENT).type("application/json").build();
+  }
+
+  @POST
+  @Path("instance/{id}/variable/{name}/set")
+  @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+  @Produces("application/json")
+  @RsComment(project = {ProjectName.JBPM})
+  public Response setInstanceVariable(
+      @PathParam("id")
+      String instanceId,
+      @PathParam("name")
+      String variableName,
+      @QueryParam("value")
+      Object variableValue
+  )
+  {
+    Map<String, Object> processData = getProcessManagement().getInstanceData(instanceId);
+    if(processData!=null && variableName!=null && !"".equals(variableName)) {
+        processData.put(variableName, variableValue);
+        getProcessManagement().setInstanceData(instanceId, processData);
+    } else {
+        Response.status(Status.PRECONDITION_FAILED).type("application/json").build();
+    }
+    return Response.ok().type("application/json").build();
   }
 
   @POST
