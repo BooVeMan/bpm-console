@@ -22,6 +22,8 @@
 package org.jboss.bpm.console.server;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jboss.bpm.console.client.model.*;
@@ -229,6 +231,23 @@ public class ProcessMgmtFacade
     return Response.ok(sb.toString()).build();
   }
 
+  @POST
+  @Path("instance/{id}/dataset/set")
+  @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+  @Produces("application/json")
+  public Response setInstanceData(
+      @PathParam("id")
+      String instanceId,
+      @FormParam("variables")
+      String variables
+  )
+  {
+      Gson gson = GsonFactory.createInstance();
+      Map<String, Object> map = gson.fromJson(variables, new TypeToken<Map<String, Object>>(){}.getType());
+      getProcessManagement().setInstanceData(instanceId, map);
+      return Response.ok().type("application/json").build();
+  }
+
   @GET
   @Path("instance/{id}")
   @Produces("application/json")
@@ -270,13 +289,15 @@ public class ProcessMgmtFacade
       String instanceId,
       @PathParam("name")
       String variableName,
-      @QueryParam("value")
-      Object variableValue
+      @FormParam("value")
+      String variableValue
   )
   {
     Map<String, Object> processData = getProcessManagement().getInstanceData(instanceId);
+    Gson gson = GsonFactory.createInstance();
+    Object variableObj = gson.fromJson(variableValue, new TypeToken<Object>(){}.getType());
     if(processData!=null && variableName!=null && !"".equals(variableName)) {
-        processData.put(variableName, variableValue);
+        processData.put(variableName, variableObj);
         getProcessManagement().setInstanceData(instanceId, processData);
     } else {
         Response.status(Status.PRECONDITION_FAILED).type("application/json").build();

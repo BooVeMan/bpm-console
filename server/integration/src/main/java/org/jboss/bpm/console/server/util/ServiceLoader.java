@@ -85,7 +85,7 @@ public abstract class ServiceLoader
             br.close();
             if (factoryName != null)
             {
-               Class factoryClass = loader.loadClass(factoryName);
+               Class<?> factoryClass = loader.loadClass(factoryName);
                factory = factoryClass.newInstance();
             }
          }
@@ -111,14 +111,14 @@ public abstract class ServiceLoader
       Object factory = null;
       ClassLoader loader = Thread.currentThread().getContextClassLoader();
 
-      PrivilegedAction action = new PropertyAccessAction(propertyName);
-      String factoryName = (String)AccessController.doPrivileged(action);
+      PrivilegedAction<String> action = new PropertyAccessAction(propertyName);
+      String factoryName = AccessController.doPrivileged(action);
       if (factoryName != null)
       {
          try
          {
             //if(log.isDebugEnabled()) log.debug("Load from system property: " + factoryName);
-            Class factoryClass = loader.loadClass(factoryName);
+            Class<?> factoryClass = loader.loadClass(factoryName);
             factory = factoryClass.newInstance();
          }
          catch (Throwable t)
@@ -149,20 +149,20 @@ public abstract class ServiceLoader
 
       // Use the properties file "lib/jaxm.properties" in the JRE directory.
       // This configuration file is in standard java.util.Properties format and contains the fully qualified name of the implementation class with the key being the system property defined above.
-      PrivilegedAction action = new PropertyAccessAction("java.home");
-      String javaHome = (String)AccessController.doPrivileged(action);
+      PrivilegedAction<String> action = new PropertyAccessAction("java.home");
+      String javaHome = AccessController.doPrivileged(action);
       File jaxmFile = new File(javaHome + "/lib/service-loader.properties");
       if (jaxmFile.exists())
       {
          try
          {
-            action = new PropertyFileAccessAction(jaxmFile.getCanonicalPath());
-            Properties jaxmProperties = (Properties)AccessController.doPrivileged(action);
+             PrivilegedAction<Properties> propAction = new PropertyFileAccessAction(jaxmFile.getCanonicalPath());
+            Properties jaxmProperties = AccessController.doPrivileged(propAction);
             factoryName = jaxmProperties.getProperty(propertyName);
             if (factoryName != null)
             {
                //if(log.isDebugEnabled()) log.debug("Load from " + jaxmFile + ": " + factoryName);
-               Class factoryClass = loader.loadClass(factoryName);
+               Class<?> factoryClass = loader.loadClass(factoryName);
                factory = factoryClass.newInstance();
             }
          }
@@ -192,7 +192,7 @@ public abstract class ServiceLoader
          try
          {
             //if(log.isDebugEnabled()) log.debug("Load from default: " + factoryName);
-            Class factoryClass = loader.loadClass(defaultFactory);
+            Class<?> factoryClass = loader.loadClass(defaultFactory);
             factory = factoryClass.newInstance();
          }
          catch (Throwable t)
@@ -204,7 +204,7 @@ public abstract class ServiceLoader
       return factory;
    }
 
-   private static class PropertyAccessAction implements PrivilegedAction
+   private static class PropertyAccessAction implements PrivilegedAction<String>
    {
       private String name;
 
@@ -213,13 +213,13 @@ public abstract class ServiceLoader
          this.name = name;
       }
 
-      public Object run()
+      public String run()
       {
          return System.getProperty(name);
       }
    }
 
-   private static class PropertyFileAccessAction implements PrivilegedAction
+   private static class PropertyFileAccessAction implements PrivilegedAction<Properties>
    {
       private String filename;
 
@@ -228,7 +228,7 @@ public abstract class ServiceLoader
          this.filename = filename;
       }
 
-      public Object run()
+      public Properties run()
       {
          try
          {
