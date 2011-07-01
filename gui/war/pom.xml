@@ -542,7 +542,7 @@
 										<artifactItem>
 											<groupId>org.jboss.bpm</groupId>
 											<artifactId>gwt-console-profile-jbpm</artifactId>
-											<outputDirectory>${jbpm.war.output}/app</outputDirectory>
+											<outputDirectory>${jbpm.war.output}</outputDirectory>
 										</artifactItem>
 									</artifactItems>
 								</configuration>
