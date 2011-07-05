@@ -45,24 +45,69 @@
 	<build>
 		<!--  Include SOURCE in output artifact for GWT (GWT libraries must include source) -->
 
-		<resources>
-			<resource>
-				<directory>src/main/java</directory>
-			</resource>
-			<resource>
-				<directory>src/main/resources</directory>
-			</resource>
-		</resources>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<configuration>
-					<source>1.5</source>
-					<target>1.5</target>
-				</configuration>
-			</plugin>
-		</plugins>
-		<finalName>gwt-console-server-integration</finalName>
-	</build>
+  <!-- Parent -->
+  <parent>
+    <groupId>org.jboss.bpm</groupId>
+    <artifactId>gwt-console-servermodule</artifactId>
+    <version>2.2.6.Final</version>
+    <relativePath>../pom.xml</relativePath>
+  </parent>
+
+  <dependencies>
+    <!-- Module -->
+    <dependency>
+      <groupId>org.jboss.bpm</groupId>
+      <artifactId>gwt-console-rpc</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>javax.ejb</groupId>
+      <artifactId>ejb-api</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>javax.xml.bind</groupId>
+      <artifactId>jaxb-api</artifactId>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.jboss.javaee</groupId>
+      <artifactId>jboss-javaee</artifactId>
+      <version>5.0.0.GA</version>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>commons-logging</groupId>
+      <artifactId>commons-logging</artifactId>
+      <scope>provided</scope>
+    </dependency>
+    
+  </dependencies>
+
+  <build>
+    <!--  Include SOURCE in output artifact for GWT (GWT libraries must include source) -->
+    <resources>
+      <resource>
+        <directory>src/main/java</directory>
+      </resource>
+      <resource>
+        <directory>src/main/resources</directory>
+      </resource>
+    </resources>
+
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <source>1.5</source>
+          <target>1.5</target>
+        </configuration>
+      </plugin>    
+    </plugins>
+    <finalName>gwt-console-server-integration</finalName>
+  </build>
 </project>
