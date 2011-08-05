@@ -22,6 +22,8 @@
 package org.jboss.bpm.console.server;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.jboss.bpm.console.client.model.*;
@@ -36,7 +38,10 @@ import org.jboss.bpm.console.server.util.RsComment;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
+
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLDecoder;
@@ -224,6 +229,93 @@ public class ProcessMgmtFacade
     Payload2XML payload2XML = new Payload2XML();
     StringBuffer sb = payload2XML.convert(instanceId, javaPayload);
     return Response.ok(sb.toString()).build();
+  }
+
+  @POST
+  @Path("instance/{id}/dataset/set")
+  @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+  @Produces("application/json")
+  public Response setInstanceData(
+      @PathParam("id")
+      String instanceId,
+      @FormParam("variables")
+      String variables
+  )
+  {
+      Gson gson = GsonFactory.createInstance();
+      Map<String, Object> map = gson.fromJson(variables, new TypeToken<Map<String, Object>>(){}.getType());
+      getProcessManagement().setInstanceData(instanceId, map);
+      return Response.ok().type("application/json").build();
+  }
+
+  @GET
+  @Path("instance/{id}")
+  @Produces("application/json")
+  @RsComment(project = {ProjectName.JBPM})
+  public Response getInstance(
+      @PathParam("id")
+      String instanceId
+  )
+  {
+    ProcessInstanceRef processInstanceRef = getProcessManagement().getProcessInstance(instanceId);
+    return createJsonResponse(processInstanceRef);
+  }
+
+  @GET
+  @Path("instance/{id}/variable/{name}")
+  @Produces("application/json")
+  @RsComment(project = {ProjectName.JBPM})
+  public Response getInstanceVariable(
+      @PathParam("id")
+      String instanceId,
+      @PathParam("name")
+      String variableName
+  )
+  {
+    Map<String, Object> processData = getProcessManagement().getInstanceData(instanceId);
+    if(processData!=null && processData.containsKey(variableName)) {
+        return createJsonResponse(processData.get(variableName));
+    }
+    return Response.status(Status.NO_CONTENT).type("application/json").build();
+  }
+
+  @POST
+  @Path("instance/{id}/variable/{name}/set")
+  @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+  @Produces("application/json")
+  @RsComment(project = {ProjectName.JBPM})
+  public Response setInstanceVariable(
+      @PathParam("id")
+      String instanceId,
+      @PathParam("name")
+      String variableName,
+      @FormParam("value")
+      String variableValue,
+      @FormParam("class")
+      String variableClass
+  ) 
+  { 
+    Map<String, Object> processData = getProcessManagement().getInstanceData(instanceId);
+    Class<?> variableCls = Object.class;
+    if(variableClass != null ) {
+        try {
+            variableCls = Class.forName(variableClass);
+        } catch (ClassNotFoundException e) {
+            variableCls = processData.get(variableName)==null?Object.class:processData.get(variableName).getClass();
+        }
+    }
+    Object variableObj = null;
+    if(variableValue != null) {
+        Gson gson = GsonFactory.createInstance();
+        variableObj = gson.fromJson(variableValue, variableCls);
+    }
+    if(processData!=null && variableName!=null && !"".equals(variableName)) {
+        processData.put(variableName, variableObj);
+        getProcessManagement().setInstanceData(instanceId, processData);
+    } else {
+        Response.status(Status.PRECONDITION_FAILED).type("application/json").build();
+    }
+    return Response.ok().type("application/json").build();
   }
 
   @POST
