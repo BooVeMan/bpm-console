@@ -95,7 +95,7 @@
         <dependency>
             <groupId>org.jboss.bpm</groupId>
             <artifactId>activity-monitor-model</artifactId>
-            <scope>provided</scope>
+            <!--scope>provided</scope-->
             <version>${activity.monitor.version}</version>
             <exclusions>
                 <exclusion>
