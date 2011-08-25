@@ -195,6 +195,32 @@ public class ProcessMgmtFacade
     return createJsonResponse(wrapper);
   }
 
+  @GET
+  @Path("definition/{id}/instances")
+  @Produces("application/json")
+  public Response getInstancesJSON(
+      @PathParam("id")
+      String definitionId,
+      @QueryParam("requestId") 
+      String requestId,
+      @QueryParam("processState") 
+      String processState,
+      @QueryParam("currentTask") 
+      String currentTask,
+      @QueryParam("processDate") 
+      String processDate
+  )
+  {
+      StringBuilder paramBuilder = new StringBuilder(definitionId).append("ÿ");
+      paramBuilder.append(requestId).append("ÿ");
+      paramBuilder.append(processState).append("ÿ");
+      paramBuilder.append(currentTask).append("ÿ");
+      paramBuilder.append(processDate);
+    ProcessInstanceRefWrapper wrapper =
+        new ProcessInstanceRefWrapper(getProcessManagement().getProcessInstances(paramBuilder.toString()));
+    return createJsonResponse(wrapper);
+  }
+
   @POST
   @Path("definition/{id}/new_instance")
   @Produces("application/json")
@@ -313,7 +339,7 @@ public class ProcessMgmtFacade
         processData.put(variableName, variableObj);
         getProcessManagement().setInstanceData(instanceId, processData);
     } else {
-        Response.status(Status.PRECONDITION_FAILED).type("application/json").build();
+        return Response.status(Status.PRECONDITION_FAILED).type("application/json").build();
     }
     return Response.ok().type("application/json").build();
   }

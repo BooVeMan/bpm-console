@@ -55,7 +55,6 @@ public class ProcessHistoryInstanceListView implements ViewInterface, WidgetProv
 
     private String selectedProcessInstanceId;
 		
-	@Override
 	public void provideWidget(ProvisioningCallback callback) {
 		
 		controller = Registry.get(Controller.class);
@@ -73,7 +72,6 @@ public class ProcessHistoryInstanceListView implements ViewInterface, WidgetProv
 		listbox = new org.gwt.mosaic.ui.client.ListBox<HistoryProcessInstanceRef>(new String[]{"Instance Id", "Correlation Key", "Status", "Start Time", "Finish Time"});
 		listbox.setCellRenderer(new org.gwt.mosaic.ui.client.ListBox.CellRenderer<HistoryProcessInstanceRef>(){
 
-			@Override
 			public void renderCell(org.gwt.mosaic.ui.client.ListBox<HistoryProcessInstanceRef> listBox, int row, int column, HistoryProcessInstanceRef item) {
 				switch(column) {
 				case 0:
@@ -100,7 +98,6 @@ public class ProcessHistoryInstanceListView implements ViewInterface, WidgetProv
 		
 		listbox.addDoubleClickHandler(new DoubleClickHandler(){
 
-			@Override
 			public void onDoubleClick(DoubleClickEvent event) {
 				int index = listbox.getSelectedIndex();
 				if (index != -1) {
@@ -121,7 +118,6 @@ public class ProcessHistoryInstanceListView implements ViewInterface, WidgetProv
 	}	
 
 	
-	@Override
 	public void setController(Controller controller) {
 		this.controller = controller;
 	}
@@ -129,13 +125,11 @@ public class ProcessHistoryInstanceListView implements ViewInterface, WidgetProv
 
 
 
-	@Override
 	public void reset() {
 		
 	}
 
 
-	@Override
 	public void update(Object... data) {
 		List<HistoryProcessInstanceRef> result = (List<HistoryProcessInstanceRef>)data[0];
 		DefaultListModel<HistoryProcessInstanceRef> model = (DefaultListModel<HistoryProcessInstanceRef>)listbox.getModel();
@@ -148,7 +142,6 @@ public class ProcessHistoryInstanceListView implements ViewInterface, WidgetProv
 		
 	}
 
-	@Override
 	public void setLoading(boolean isLoading) {
 		LoadingOverlay.on(instanceList, isLoading);
 	}
@@ -170,7 +163,6 @@ public class ProcessHistoryInstanceListView implements ViewInterface, WidgetProv
         processEvents = new ListBox<String>(new String[]{"Process Events"});
         processEvents.setCellRenderer(new CellRenderer<String>(){
 
-			@Override
 			public void renderCell(ListBox<String> listBox, int row, int column, String item) {
 				switch(column) {
 				case 0:

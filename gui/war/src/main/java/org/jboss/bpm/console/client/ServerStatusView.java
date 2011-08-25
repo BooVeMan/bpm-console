@@ -62,7 +62,6 @@ public class ServerStatusView
     controller = Registry.get(Controller.class);
   }
 
-  @Override
   public void provideWidget(ProvisioningCallback callback)
   {
     layoutPanel = new MosaicPanel(new BoxLayout(BoxLayout.Orientation.VERTICAL));

@@ -193,7 +193,6 @@ public class InstanceDetailView extends CaptionLayoutPanel implements ViewInterf
         processEvents = new ListBox<String>(new String[]{"Process Events"});
         processEvents.setCellRenderer(new CellRenderer<String>(){
 
-			@Override
 			public void renderCell(ListBox<String> listBox, int row,
 					int column, String item) {
 				switch(column) {

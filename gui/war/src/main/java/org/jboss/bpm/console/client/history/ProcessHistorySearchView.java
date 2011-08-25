@@ -59,7 +59,6 @@ public class ProcessHistorySearchView implements WidgetProvider, ViewInterface {
         this.controller.addAction(LoadProcessDefinitionsAction.ID, new LoadProcessDefinitionsAction());
 	}
 	
-	@Override
 	public void provideWidget(final ProvisioningCallback callback) {
 
         controller.handleEvent(new Event(LoadProcessDefinitionsAction.ID, null));
@@ -79,7 +78,6 @@ public class ProcessHistorySearchView implements WidgetProvider, ViewInterface {
 		
 		toolbar.add(new Button("Search", new ClickHandler() {
 
-			@Override
 			public void onClick(ClickEvent clickEvent) {
 
                 if (definitionList.getItemCount() < 1) {
@@ -145,12 +143,10 @@ public class ProcessHistorySearchView implements WidgetProvider, ViewInterface {
 		final DecoratedTabLayoutPanel tabPanel = new DecoratedTabLayoutPanel(false);
 		listview.provideWidget(new ProvisioningCallback(){
 
-			@Override
 			public void onSuccess(Widget instance) {
 				tabPanel.add(instance, "History Instances");			
 			}
 
-			@Override
 			public void onUnavailable() {
 				
 			}
@@ -206,7 +202,6 @@ public class ProcessHistorySearchView implements WidgetProvider, ViewInterface {
 	}
 
 
-	@Override
 	public void setController(Controller controller) {
 		this.controller = controller;
 	}

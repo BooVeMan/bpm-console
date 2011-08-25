@@ -21,7 +21,6 @@ public class ProcessHistorySearchModule implements WidgetProvider {
 	private ProcessHistorySearchView instance;
 	
 	
-	@Override
 	public void provideWidget(final ProvisioningCallback callback) {
 	    GWT.runAsync(
 	            new RunAsyncCallback()
